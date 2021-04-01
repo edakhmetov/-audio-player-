@@ -1,30 +1,43 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <div id="container">
+    <Visualizer />
+    <Buttons />
   </div>
-  <router-view/>
 </template>
 
+<script>
+import Visualizer from './components/Visualizer';
+import Buttons from './components/Buttons';
+
+export default {
+  name: 'App',
+  components: {
+    Visualizer,
+    Buttons
+  }
+}
+</script>
+
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-#nav {
-  padding: 30px;
+body {
+  background-color: black;
 }
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
+#container {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    height: 700px;
+    margin-top: -350px;
+    width: 600px;
+    margin-left: -300px;
+    background-color: #585858;
+    border-radius: 17px;
 }
 </style>
