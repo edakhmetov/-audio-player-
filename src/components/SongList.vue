@@ -1,20 +1,20 @@
 <template>
-    <div class="visualizer">
+    <div class="songList">
 
     </div>
 </template>
 
 <script>
- export default {
-     name: 'Visualizer',
- }
+export default {
+    name: 'SongList',
+}
 </script>
 
 <style scoped>
-    .visualizer {
+    .songList {
         width: 550px;
         height: 300px;
-        background-color: black;
+        background: black;
         border-radius: 17px;
     }
 </style>
