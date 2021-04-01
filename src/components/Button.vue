@@ -20,6 +20,12 @@ export default {
         background-color: white;
         border-radius: 50%;
     }
+    .btn#pause{
+        width: 75px;
+        height: 75px;
+        background-color: purple;
+        border-radius: 50%;
+    }
     .btn#prev {
         width: 50px;
         height: 50px;

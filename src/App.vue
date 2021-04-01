@@ -1,23 +1,20 @@
 <template>
   <div id="container">
     <Visualizer />
-    <Buttons />
-    <Playlist />
+    <Player />
     <p>Copyright &copy; 2021</p>
   </div>
 </template>
 
 <script>
 import Visualizer from './components/Visualizer';
-import Buttons from './components/Buttons';
-import Playlist from './components/Playlist'
+import Player from './components/Player'
 
 export default {
   name: 'App',
   components: {
     Visualizer,
-    Buttons,
-    Playlist
+    Player
   }
 }
 </script>

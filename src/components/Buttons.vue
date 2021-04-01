@@ -1,8 +1,9 @@
 <template>
     <div class="buttons">
-        <Button id='prev' />
-        <Button id='play' />
-        <Button id='next' />
+        <Button id='prev' @click="$emit('prev-song')"/>
+        <Button id='play' v-if="!isPlaying" @click="$emit('play-song')"/>
+        <Button id='pause' v-else @click="$emit('pause-song')"/>
+        <Button id='next' @click="$emit('next-song')"/>
     </div>
 </template>
 
@@ -11,6 +12,9 @@ import Button from './Button'
 
 export default {
     name: 'Buttons',
+    props: {
+        isPlaying: Boolean,
+    },
     components: {
         Button
     }
