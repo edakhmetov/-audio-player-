@@ -2,7 +2,7 @@
   <div id="container">
     <Visualizer />
     <Buttons />
-    <SongList />
+    <Playlist />
     <p>Copyright &copy; 2021</p>
   </div>
 </template>
@@ -10,14 +10,14 @@
 <script>
 import Visualizer from './components/Visualizer';
 import Buttons from './components/Buttons';
-import SongList from './components/SongList'
+import Playlist from './components/Playlist'
 
 export default {
   name: 'App',
   components: {
     Visualizer,
     Buttons,
-    SongList
+    Playlist
   }
 }
 </script>
