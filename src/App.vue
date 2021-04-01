@@ -2,18 +2,22 @@
   <div id="container">
     <Visualizer />
     <Buttons />
+    <SongList />
+    <p>Copyright &copy; 2021</p>
   </div>
 </template>
 
 <script>
 import Visualizer from './components/Visualizer';
 import Buttons from './components/Buttons';
+import SongList from './components/SongList'
 
 export default {
   name: 'App',
   components: {
     Visualizer,
-    Buttons
+    Buttons,
+    SongList
   }
 }
 </script>
@@ -33,11 +37,15 @@ body {
     position: absolute;
     left: 50%;
     top: 50%;
-    height: 700px;
-    margin-top: -350px;
+    height: 800px;
+    margin-top: -400px;
     width: 600px;
     margin-left: -300px;
     background-color: #585858;
     border-radius: 17px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
 }
 </style>

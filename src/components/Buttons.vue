@@ -28,7 +28,6 @@ export default {
         align-items: center;
         width: 250px;
         height: 75px;
-        margin: auto;
         background-color: black;
     }
 </style>
