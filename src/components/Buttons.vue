@@ -1,22 +1,18 @@
 <template>
     <div class="buttons">
-        <PrevBtn />
-        <PlayBtn />
-        <NextBtn />
+        <Button id='prev' />
+        <Button id='play' />
+        <Button id='next' />
     </div>
 </template>
 
 <script>
-import PlayBtn from './PlayBtn'
-import PrevBtn from './PrevBtn'
-import NextBtn from './NextBtn'
+import Button from './Button'
 
 export default {
     name: 'Buttons',
     components: {
-        PlayBtn,
-        PrevBtn,
-        NextBtn
+        Button
     }
 }
 </script>
