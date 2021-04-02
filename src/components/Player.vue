@@ -48,6 +48,8 @@ export default {
         },
       ],
       playback: new Audio(),
+      allSoundsById: [],
+      audioContextById: [],
     };
   },
   methods: {
@@ -65,24 +67,18 @@ export default {
       this.isPlaying = false;
     },
     prev () {
-      console.log(this.index);
       this.index--;
       if (this.index < 0) {
         this.index = this.songs.length - 1;
       }
-      console.log(this.index);
       this.current = this.songs[this.index]
       this.play(this.current);
     },
     next () {
-      console.log(this.index);
-
       this.index++;
       if (this.index > this.songs.length - 1) {
         this.index = 0;
       }
-      console.log(this.index);
-
       this.current = this.songs[this.index]
       this.play(this.current);
     }
