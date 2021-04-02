@@ -1,19 +1,18 @@
 <template>
   <div id="container">
-    <Visualizer />
+    <!-- <Visualizer /> -->
     <Player />
     <p>Copyright &copy; 2021</p>
   </div>
 </template>
 
 <script>
-import Visualizer from './components/Visualizer';
+// import Visualizer from './components/Visualizer';
 import Player from './components/Player'
 
 export default {
   name: 'App',
   components: {
-    Visualizer,
     Player
   }
 }

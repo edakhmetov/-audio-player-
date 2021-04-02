@@ -1,5 +1,7 @@
 <template>
 <div class="player">
+  <Visualizer />
+  <p>{{current.title}}</p>
   <Buttons
     :is-playing="isPlaying" 
     @prev-song="prev"
@@ -9,20 +11,22 @@
   />
   <div class="playlist">
     <div class="song" v-for="song in songs" :key="song">
-      <!-- <audio  controls>
-        <source :src="song.src" />
-      </audio> -->
-      <span class="title">{{song.title}}</span>
+      <button @click="play(song)">
+        {{song.title}}
+      </button>
     </div>
   </div>
 </div>
 </template>
 
 <script>
-import Buttons from './Buttons'
+import Buttons from './Buttons';
+import Visualizer from './Visualizer';
+
 export default {
   name: "Player",
   components: {
+    Visualizer,
     Buttons
   },
   data() {
@@ -50,6 +54,7 @@ export default {
     play (song) {
       if (typeof song != 'undefined') {
         this.current = song;
+        this.index = this.songs.indexOf(song);
         this.playback.src = this.current.src;
       }
       this.playback.play();
@@ -60,18 +65,23 @@ export default {
       this.isPlaying = false;
     },
     prev () {
+      console.log(this.index);
       this.index--;
       if (this.index < 0) {
         this.index = this.songs.length - 1;
       }
+      console.log(this.index);
       this.current = this.songs[this.index]
       this.play(this.current);
     },
     next () {
+      console.log(this.index);
+
       this.index++;
       if (this.index > this.songs.length - 1) {
         this.index = 0;
       }
+      console.log(this.index);
 
       this.current = this.songs[this.index]
       this.play(this.current);
@@ -90,7 +100,7 @@ export default {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  height: 400px;
+  height: 750px;
 }
 .playlist {
   width: 550px;

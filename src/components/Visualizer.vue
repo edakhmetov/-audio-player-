@@ -1,6 +1,7 @@
 <template>
     <div class="visualizer">
-
+        <canvas width="550" height="300">
+        </canvas>
     </div>
 </template>
 
