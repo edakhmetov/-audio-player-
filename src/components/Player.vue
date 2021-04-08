@@ -1,12 +1,19 @@
 <template>
 <div class="player">
-  <Visualizer 
-  />
+  <div class="visualizer">
+    <canvas width="550" height="300" ref="canvas">
+    </canvas>
+  </div>
+
   <audio
   :src='playlist[index].src'
   type='audio/mp3'
-  ref='myAudio'></audio>
-  <p>{{current.title}}</p>
+  ref='myAudio'
+  controls>
+  </audio>
+    <p class="title">{{current.title}}</p>
+
+
   <Buttons
     :is-playing="isPlaying" 
     @prev-song="prev"
@@ -26,23 +33,17 @@
 
 <script>
 import Buttons from './Buttons';
-import Visualizer from './Visualizer';
 
 export default {
   name: "Player",
   mounted: function() {
     this.myAudioPlayer = this.$refs.myAudio;
-    this.setAnalyser();
-    if (this.playback.isPlaying) {
-      this.setAnalyser();
-    }
-    console.log(this.audioContextById);
+    // this.loadElements();
   },
   props: {
     playlist: Array,
   },
   components: {
-    Visualizer,
     Buttons
   },
   data() {
@@ -54,6 +55,10 @@ export default {
       playback: new Audio(),
       allSoundsById: [],
       audioContextById: [],
+      analyser: null,
+      audio: null,
+      ctx: null,
+      audioCtx: null,
     };
   },
   methods: {
@@ -63,15 +68,28 @@ export default {
         this.index = this.playlist.indexOf(song);
         this.playback.src = this.current.src;
       }
+      // console.log(this.myAudioPlayer);
       this.playback.play();
-      // console.log(this.myAudioPlayer)
       this.isPlaying = true;
-      // this.myAudioPlayer = this.$refs.myAudio;
-      // this.myAudioPlayer.play();
+      this.loadElements();
+      this.audio = this.$refs.myAudio;
       this.allSoundsById[this.index] = this.playback;
-      // console.log(this.allSoundsById);
-      // this.setAnalyser()
-      // console.log(this.allSoundsById[this.index]);
+      // console.log(this.audio, this.current);
+      // this.audioContextById[this.index] = this.setAnalyser();
+      console.log(this.allSoundsById);
+      // if (this.audioContextById[this.index] != this.audioCtx) {
+      //   this.setAnalyser();
+      //   this.audioContextById[this.index] = this.audioCtx;
+      // }
+      // this.setAnalyser();
+      // console.log(this.audioCtx);
+      // Object.keys(this.allSoundsById).forEach(function () {
+        // condition to avoid creating duplicate context. the visualizer won't break without it, but you will get a console error.
+        // if (!this.audioContextById[this.index]) {
+        //     this.audioContextById[this.index] = this.setAnalyser();
+        // }
+      // });
+      // console.log(this.audioContextById);
     },
     pause () {
       this.playback.pause();
@@ -93,37 +111,34 @@ export default {
       this.current = this.playlist[this.index];
       this.play(this.current);
     },
-    createAudioContextObj () {
-      const ctx = new AudioContext();
-      const src = ctx.createMediaElementSource(this.myAudioPlayer);
-      ctx.crossOrigin = 'anonymous';
-      this.myAudioPlayer.crossOrigin = 'anonymous';
-      const analyser = ctx.createAnalyser();
-      src.connect(analyser);
-      analyser.fftSize = 2048;
-      analyser.connect(ctx.destination);
+    loadElements () {
+      this.audio = this.$refs.myAudio;
+      this.audio.load();
+      this.ctx = this.$refs.canvas;
+    },
+    setAnalyser: function () {
+      this.audioCtx = this.audioCtx || new AudioContext();
+      this.analyser = this.analyser || this.audioCtx.createAnalyser();
+      const src = this.audioCtx.createMediaElementSource(this.audio);
+
+      src.connect(this.analyser);
+      this.analyser.fftsize = 2048;
+      this.analyser.connect(this.audioCtx.destination);
+      
       const bufferLength = this.analyser.frequencyBinCount;
       const freqData = new Uint8Array(bufferLength);
+      const analyser = this.analyser;
       const audioContextObj = {
-        freqData,
+        freqData, // note: at this time, this area is unpopulated!
         analyser
-      };
-      console.log(audioContextObj);
+      }
+
       return audioContextObj;
     },
-    setAnalyser () {
-      Object.keys(this.allSoundsById).forEach(function(sound, id) {
-        console.log(this.audioContextById[id])
-        if (!this.audioContextById) {
-          this.audioContextById[id] = this.createAudioContextObj();
-        }
-      })
-    }
   },
   created () {
     this.current = this.playlist[this.index];
     this.playback.src = this.current.src;
-    this.audioContextById = [];
   }
 };
 </script>
@@ -141,6 +156,12 @@ export default {
   height: 300px;
   background: black;
   border-radius: 17px;
+}
+.visualizer {
+        width: 550px;
+        height: 300px;
+        background-color: black;
+        border-radius: 17px;
 }
 .title  {
   color: white;
