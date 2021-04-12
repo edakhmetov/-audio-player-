@@ -38,7 +38,6 @@ export default {
   name: "Player",
   mounted: function() {
     this.myAudioPlayer = this.$refs.myAudio;
-    // this.loadElements();
   },
   props: {
     playlist: Array,
@@ -63,43 +62,19 @@ export default {
   },
   methods: {
     play (song) {
-      if (!this.allSoundsById[this.index]) {
-        this.allSoundsById[this.index] = this.audio;
-      }
-      this.loadContext();
+      // if (!this.allSoundsById[this.index]) {
+      //   this.allSoundsById[this.index] = this.audio;
+      // }
       if (typeof song != 'undefined') {
         this.current = song;
         this.index = this.playlist.indexOf(song);
         this.playback.src = this.current.src;
       }
-      // console.log(this.myAudioPlayer);
+      this.createAudio(this.index);
+      console.log(this.allSoundsById);
       this.playback.play();
       this.isPlaying = true;
-      this.loadElements();
       this.audio = this.$refs.myAudio;
-      // console.log(this.audio, this.current);
-      // this.audioContextById[this.index] = this.setAnalyser();
-      console.log(this.allSoundsById);
-      console.log(this.audioContextById);
-      console.log(this.audio);
-      // if (this.audioContextById[this.index] != this.audioCtx) {
-      //   this.setAnalyser();
-      //   this.audioContextById[this.index] = this.audioCtx;
-      // }
-      // this.setAnalyser();
-      // console.log(this.audioCtx);
-      // Object.keys(this.allSoundsById).forEach(function () {
-        // condition to avoid creating duplicate context. the visualizer won't break without it, but you will get a console error.
-        // if (!this.audioContextById[this.index]) {
-        //     this.audioContextById[this.index] = this.setAnalyser();
-        // }
-      // });
-      // console.log(this.audioContextById);
-      // this.playlist.forEach(function(song, id) {
-      //   if (!this.audioContextById[id]) {
-      //     this.audioContextById[id] = this.setAnalyser();
-      //   }
-      // });
     },
     pause () {
       this.playback.pause();
@@ -126,7 +101,7 @@ export default {
       this.audio.load();
       this.ctx = this.$refs.canvas;
     },
-    setAnalyser: function () {
+    setAnalyser () {
       this.audioCtx = this.audioCtx || new AudioContext();
       this.analyser = this.analyser || this.audioCtx.createAnalyser();
       const src = this.audioCtx.createMediaElementSource(this.audio);
@@ -145,12 +120,21 @@ export default {
 
       return audioContextObj;
     },
-    loadContext: function () {
+    loadContext () {
       Object.keys(this.allSoundsById).forEach(function(sound, id) {
         if (this.audioContextById == 'undefined') {
           this.audioContextById[id] = this.setAnalyser();
         }
       })
+    },
+    createAudio (id) {
+      if (!this.allSoundsById[id]) {
+        let audio = new Audio();
+        audio.src = this.playlist[id].src;
+        audio.load();
+        this.allSoundsById[id] = audio;
+        this.loadContext();
+      }
     }
   },
   created () {
