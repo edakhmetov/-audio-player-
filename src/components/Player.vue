@@ -38,6 +38,9 @@ export default {
   name: "Player",
   mounted: function() {
     this.myAudioPlayer = this.$refs.myAudio;
+    this.width = this.$refs.canvas.clientWidth;
+    this.height = this.$refs.canvas.clientHeight;
+    this.canvasCtx = this.$refs.canvas.getContext('2d');
   },
   props: {
     playlist: Array,
@@ -56,23 +59,22 @@ export default {
       audioContextById: [],
       analyser: null,
       audio: null,
-      ctx: null,
+      canvasCtx: null,
       audioCtx: null,
+      width: null,
+      height: null,
+      barHeight: null,
+      barsCount: null
     };
   },
   methods: {
     play (song) {
-      // if (!this.allSoundsById[this.index]) {
-      //   this.allSoundsById[this.index] = this.audio;
-      // }
       if (typeof song != 'undefined') {
         this.current = song;
         this.index = this.playlist.indexOf(song);
         this.playback.src = this.current.src;
       }
       this.createAudio(this.index);
-      console.log(this.allSoundsById);
-      console.log(this.audioContextById);
       this.playback.play();
       this.isPlaying = true;
       this.audio = this.$refs.myAudio;
@@ -100,7 +102,6 @@ export default {
     loadElements () {
       this.audio = this.$refs.myAudio;
       this.audio.load();
-      this.ctx = this.$refs.canvas;
     },
     setAnalyser (audio) {
       const context = new AudioContext();
@@ -121,11 +122,9 @@ export default {
       return audioContextObj;
     },
     loadContext (id) {
-      // Object.keys(this.allSoundsById).forEach(function() {
         if (!this.audioContextById[id]) {
           this.audioContextById[id] = this.setAnalyser(this.allSoundsById[id]);
         }
-      // })
     },
     createAudio (id) {
       if (!this.allSoundsById[id]) {
