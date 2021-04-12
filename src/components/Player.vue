@@ -64,6 +64,7 @@ export default {
       width: null,
       height: null,
       barHeight: null,
+      barWidth: null,
       barsCount: null
     };
   },
@@ -74,10 +75,11 @@ export default {
         this.index = this.playlist.indexOf(song);
         this.playback.src = this.current.src;
       }
-      this.createAudio(this.index);
+      this.visualize(this.index);
       this.playback.play();
       this.isPlaying = true;
       this.audio = this.$refs.myAudio;
+      // this.renderVisualizer();
     },
     pause () {
       this.playback.pause();
@@ -99,10 +101,6 @@ export default {
       this.current = this.playlist[this.index];
       this.play(this.current);
     },
-    loadElements () {
-      this.audio = this.$refs.myAudio;
-      this.audio.load();
-    },
     setAnalyser (audio) {
       const context = new AudioContext();
       const src = context.createMediaElementSource(audio);
@@ -122,9 +120,9 @@ export default {
       return audioContextObj;
     },
     loadContext (id) {
-        if (!this.audioContextById[id]) {
-          this.audioContextById[id] = this.setAnalyser(this.allSoundsById[id]);
-        }
+      if (!this.audioContextById[id]) {
+        this.audioContextById[id] = this.setAnalyser(this.allSoundsById[id]);
+      }
     },
     createAudio (id) {
       if (!this.allSoundsById[id]) {
@@ -134,11 +132,70 @@ export default {
         this.allSoundsById[id] = audio;
         this.loadContext(id);
       }
-    }
+    },
+    renderFrame () {
+      const freqDataMany = []; // reset array that holds the sound data for given number of audio sources
+      const agg = []; // reset array that holds aggregate sound data
+
+      this.canvasCtx.clearRect(0, 0, this.width, this.height); // clear canvas at each frame
+      this.canvasCtx.fillStyle = '#fff';
+      this.canvasCtx.fillRect(0, 0, this.width, this.height);
+      // let audioContextArr = Object.values(this.audioContextById);
+
+      // for each element in that array, get the *current* frequency data and store it
+      this.audioContextById.forEach(function (audioContextObj) {
+        let freqData = audioContextObj.freqData;
+        audioContextObj.analyser.getByteFrequencyData(freqData); // populate with data
+        freqDataMany.push(freqData);
+      });
+
+      if (this.audioContextById.length > 0) {
+        // aggregate that data!
+        for (let i = 0; i < freqDataMany[0].length; i++) {
+          agg.push(0);
+          freqDataMany.forEach(function (data) {
+              agg[i] += data[i];
+          });
+        }
+
+        let x = 0;
+
+        // const drawBar = function(canvasContext, x, y, barWidth, barHeight) {
+        //   canvasContext.fillStyle = `black`;
+        //   canvasContext.fillRect(x, y, barWidth, barHeight);
+        // }
+
+        for (let i = 0; i < (this.barsCount); i++) {
+          this.barHeight = (agg[i] * 0.4);
+          let y = (this.height - this.barHeight);
+          this.canvasCtx.fillStyle = `black`;
+          this.canvasCtx.fillRect(x, y, this.barWidth, this.barHeight);
+          // drawBar(this.canvasCtx, x, y, this.barWidth, this.barHeight);
+          if (i < this.barsCount) {
+              x += this.barWidth + 1;
+          } else {
+              this.barWidth += this.barWidth + 1;
+              x += this.barWidth + 1;
+          }
+        }
+      }
+      requestAnimationFrame(this.renderFrame); // this defines the callback function for what to do at each frame
+    },
+    renderVisualizer () {
+      // const canvasCtx = this.$refs.canvas.getContext('2d');
+      this.barsCount = 300;
+      this.barWidth = this.width / this.barsCount;
+      this.renderFrame();
+    },
+    visualize (id) {
+      this.createAudio(id);
+      this.renderVisualizer();
+    }    
   },
   created () {
     this.current = this.playlist[this.index];
     this.playback.src = this.current.src;
+    // this.canvasCtx = this.$refs.canvas.getContext('2d');
   }
 };
 </script>
