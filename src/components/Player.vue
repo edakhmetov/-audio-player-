@@ -65,7 +65,7 @@ export default {
       height: null,
       barHeight: null,
       barWidth: null,
-      barsCount: null
+      barsCount: null,
     };
   },
   methods: {
@@ -79,7 +79,6 @@ export default {
       this.playback.play();
       this.isPlaying = true;
       this.audio = this.$refs.myAudio;
-      // this.renderVisualizer();
     },
     pause () {
       this.playback.pause();
@@ -119,18 +118,15 @@ export default {
 
       return audioContextObj;
     },
-    loadContext (id) {
-      if (!this.audioContextById[id]) {
-        this.audioContextById[id] = this.setAnalyser(this.allSoundsById[id]);
-      }
-    },
     createAudio (id) {
       if (!this.allSoundsById[id]) {
         let audio = new Audio();
         audio.src = this.playlist[id].src;
         audio.load();
         this.allSoundsById[id] = audio;
-        this.loadContext(id);
+        if (!this.audioContextById[id]) {
+          this.audioContextById[id] = this.setAnalyser(audio);
+        }
       }
     },
     renderFrame () {
@@ -138,7 +134,7 @@ export default {
       const agg = []; // reset array that holds aggregate sound data
 
       this.canvasCtx.clearRect(0, 0, this.width, this.height); // clear canvas at each frame
-      this.canvasCtx.fillStyle = '#fff';
+      this.canvasCtx.fillStyle = 'black';
       this.canvasCtx.fillRect(0, 0, this.width, this.height);
       // let audioContextArr = Object.values(this.audioContextById);
 
@@ -160,17 +156,12 @@ export default {
 
         let x = 0;
 
-        // const drawBar = function(canvasContext, x, y, barWidth, barHeight) {
-        //   canvasContext.fillStyle = `black`;
-        //   canvasContext.fillRect(x, y, barWidth, barHeight);
-        // }
 
         for (let i = 0; i < (this.barsCount); i++) {
-          this.barHeight = (agg[i] * 0.4);
+          this.barHeight = (agg[i] * 0.9);
           let y = (this.height - this.barHeight);
-          this.canvasCtx.fillStyle = `black`;
+          this.canvasCtx.fillStyle = `#fff`;
           this.canvasCtx.fillRect(x, y, this.barWidth, this.barHeight);
-          // drawBar(this.canvasCtx, x, y, this.barWidth, this.barHeight);
           if (i < this.barsCount) {
               x += this.barWidth + 1;
           } else {
@@ -195,7 +186,6 @@ export default {
   created () {
     this.current = this.playlist[this.index];
     this.playback.src = this.current.src;
-    // this.canvasCtx = this.$refs.canvas.getContext('2d');
   }
 };
 </script>
