@@ -122,7 +122,7 @@ export default {
     },
     loadContext () {
       Object.keys(this.allSoundsById).forEach(function(sound, id) {
-        if (this.audioContextById == 'undefined') {
+        if (!this.audioContextById[id]) {
           this.audioContextById[id] = this.setAnalyser();
         }
       })
