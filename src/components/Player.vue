@@ -72,6 +72,7 @@ export default {
       }
       this.createAudio(this.index);
       console.log(this.allSoundsById);
+      console.log(this.audioContextById);
       this.playback.play();
       this.isPlaying = true;
       this.audio = this.$refs.myAudio;
@@ -101,18 +102,17 @@ export default {
       this.audio.load();
       this.ctx = this.$refs.canvas;
     },
-    setAnalyser () {
-      this.audioCtx = this.audioCtx || new AudioContext();
-      this.analyser = this.analyser || this.audioCtx.createAnalyser();
-      const src = this.audioCtx.createMediaElementSource(this.audio);
+    setAnalyser (audio) {
+      const context = new AudioContext();
+      const src = context.createMediaElementSource(audio);
+      const analyser = context.createAnalyser();
 
-      src.connect(this.analyser);
-      this.analyser.fftsize = 2048;
-      this.analyser.connect(this.audioCtx.destination);
+      src.connect(analyser);
+      analyser.fftsize = 2048;
+      analyser.connect(context.destination);
       
-      const bufferLength = this.analyser.frequencyBinCount;
+      const bufferLength = analyser.frequencyBinCount;
       const freqData = new Uint8Array(bufferLength);
-      const analyser = this.analyser;
       const audioContextObj = {
         freqData, // note: at this time, this area is unpopulated!
         analyser
@@ -120,12 +120,12 @@ export default {
 
       return audioContextObj;
     },
-    loadContext () {
-      Object.keys(this.allSoundsById).forEach(function(sound, id) {
+    loadContext (id) {
+      // Object.keys(this.allSoundsById).forEach(function() {
         if (!this.audioContextById[id]) {
-          this.audioContextById[id] = this.setAnalyser();
+          this.audioContextById[id] = this.setAnalyser(this.allSoundsById[id]);
         }
-      })
+      // })
     },
     createAudio (id) {
       if (!this.allSoundsById[id]) {
@@ -133,7 +133,7 @@ export default {
         audio.src = this.playlist[id].src;
         audio.load();
         this.allSoundsById[id] = audio;
-        this.loadContext();
+        this.loadContext(id);
       }
     }
   },
