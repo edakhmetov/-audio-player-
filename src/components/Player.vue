@@ -79,6 +79,7 @@ export default {
       this.playback.play();
       this.isPlaying = true;
       this.audio = this.$refs.myAudio;
+      // console.log(this.audioContextById);
     },
     pause () {
       this.playback.pause();
@@ -136,32 +137,32 @@ export default {
       this.canvasCtx.clearRect(0, 0, this.width, this.height); // clear canvas at each frame
       this.canvasCtx.fillStyle = 'black';
       this.canvasCtx.fillRect(0, 0, this.width, this.height);
-      // let audioContextArr = Object.values(this.audioContextById);
+      let audioContextArr = Object.values(this.audioContextById);
 
       // for each element in that array, get the *current* frequency data and store it
-      this.audioContextById.forEach(function (audioContextObj) {
+      audioContextArr.forEach(function (audioContextObj) {
         let freqData = audioContextObj.freqData;
         audioContextObj.analyser.getByteFrequencyData(freqData); // populate with data
         freqDataMany.push(freqData);
       });
 
-      if (this.audioContextById.length > 0) {
+      if (audioContextArr.length > 0) {
         // aggregate that data!
         for (let i = 0; i < freqDataMany[0].length; i++) {
           agg.push(0);
           freqDataMany.forEach(function (data) {
+              console.log(data[i])
               agg[i] += data[i];
           });
         }
 
         let x = 0;
-
-
+        let barHeight;
         for (let i = 0; i < (this.barsCount); i++) {
-          this.barHeight = (agg[i] * 0.9);
-          let y = (this.height - this.barHeight);
+          barHeight = (agg[i] * 1.1);
+          let y = (this.height - barHeight);
           this.canvasCtx.fillStyle = `#fff`;
-          this.canvasCtx.fillRect(x, y, this.barWidth, this.barHeight);
+          this.canvasCtx.fillRect(x, y, this.barWidth, barHeight);
           if (i < this.barsCount) {
               x += this.barWidth + 1;
           } else {
@@ -170,7 +171,7 @@ export default {
           }
         }
       }
-      requestAnimationFrame(this.renderFrame); // this defines the callback function for what to do at each frame
+      requestAnimationFrame(this.renderFrame);
     },
     renderVisualizer () {
       // const canvasCtx = this.$refs.canvas.getContext('2d');
